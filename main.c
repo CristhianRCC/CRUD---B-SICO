@@ -6,142 +6,213 @@
 
 int main()
 {
-    int option;
+    //Variaveis essenciais do programa
+    int option = -1;
 
     char list[MAX_REGISTROS][MAX_LETRAS] = {0};
     char name[MAX_LETRAS];
     char new_name[MAX_LETRAS];
 
-    int conditional = 0;
-    int free_space = -1;
-
-    printf("1 - Criar um usuario.\n");
-    printf("2 - Lista de usuarios.\n");
-    printf("3 - Editar usuario.\n");
-    printf("4 - Apagar usuario.\n");
-
-    scanf("%d", &option);
-
-    switch (option)
+    //Continua perguntando sem ter que executar manualmente 
+    while(option != 0)
     {
-    case 1:
+        printf("\n===== CRUD DE USUARIOS =====\n");
+        printf("1 - Criar usuario\n");
+        printf("2 - Buscar usuario\n");
+        printf("3 - Editar usuario\n");
+        printf("4 - Apagar usuario\n");
+        printf("5 - Listar usuarios\n");
+        printf("0 - Sair\n");
+        printf("Opcao: ");
 
-        conditional = 0;
-        free_space = -1;
+        scanf("%d", &option);
 
-        printf("Insira o nome do novo usuario: ");
-        scanf("%s", name);
-
-        // Verifica se o usuario ja existe
-        for (int i = 0; i < MAX_REGISTROS; i++)
+        //Menu
+        switch(option)
         {
-            if (strcmp(list[i], name) == 0)
+            case 1:
             {
-                conditional = 1;
+                int conditional = 0;
+                int free_space = -1;
+                //Adiciona uma string de ate 29 caracteres 
+                printf("Insira o nome do novo usuario: ");
+                scanf("%29s", name);
+
+                //Verifica se o usuario ja existe
+                for(int i = 0; i < MAX_REGISTROS; i++)
+                {
+                    if(strcmp(list[i], name) == 0)
+                    {
+                        conditional = 1;
+                        break;
+                    }
+                }
+
+                if(conditional)
+                {
+                    printf("ERROR: O USUARIO JA EXISTE.\n");
+                }
+                else
+                {
+                    for(int i = 0; i < MAX_REGISTROS; i++)
+                    {
+                        if(list[i][0] == '\0')
+                        {
+                            free_space = i;
+                            break;
+                        }
+                    }
+
+                    if(free_space == -1)
+                    {
+                        printf("ERROR: A LISTA ESTA CHEIA.\n");
+                    }
+                    else
+                    {
+                        strcpy(list[free_space], name);
+                        printf("Usuario adicionado com sucesso!\n");
+                    }
+                }
+
                 break;
             }
-        }
 
-        if (conditional)
-        {
-            printf("ERROR: O USUARIO JA EXISTE.\n");
-        }
-        else
-        {
-            // Procura a primeira vaga livre
-            for (int i = 0; i < MAX_REGISTROS; i++)
+            case 2:
             {
-                if (list[i][0] == '\0')
+                int found = -1;
+
+                printf("Digite o nome que deseja buscar: ");
+                scanf("%29s", name);
+
+                for(int i = 0; i < MAX_REGISTROS; i++)
                 {
-                    free_space = i;
+                    if(strcmp(list[i], name) == 0)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+
+                if(found == -1)
+                {
+                    printf("Nome nao encontrado.\n");
+                }
+                else
+                {
+                    printf("Nome encontrado na posicao %d.\n", found);
+                }
+
+                break;
+            }
+
+            case 3:
+            {
+                //Caso para a modificacao de usuario
+                int found = -1;
+                int exists = 0;
+
+                printf("Insira o nome do usuario: ");
+                scanf("%29s", name);
+
+                for(int i = 0; i < MAX_REGISTROS; i++)
+                {
+                    if(strcmp(list[i], name) == 0)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+
+                if(found == -1)
+                {
+                    printf("Usuario nao encontrado.\n");
                     break;
                 }
-            }
 
-            if (free_space == -1)
-            {
-                printf("ERROR: A LISTA ESTA CHEIA.\n");
-            }
-            else
-            {
-                strcpy(list[free_space], name);
-                printf("Usuario adicionado!\n");
-            }
-        }
+                printf("Insira um novo nome para o usuario: ");
+                scanf("%29s", new_name);
 
-        break;
+                for(int i = 0; i < MAX_REGISTROS; i++)
+                {
+                    if(i != found && strcmp(list[i], new_name) == 0)
+                    {
+                        exists = 1;
+                        break;
+                    }
+                }
 
-    case 2:
+                if(exists)
+                {
+                    printf("ERROR: Esse nome ja existe.\n");
+                }
+                else
+                {
+                    strcpy(list[found], new_name);
+                    printf("Usuario alterado com sucesso!\n");
+                }
 
-        printf("\n=== LISTA DE USUARIOS ===\n");
-
-        for (int i = 0; i < MAX_REGISTROS; i++)
-        {
-            if (list[i][0] != '\0')
-            {
-                printf("%d - %s\n", i, list[i]);
-            }
-        }
-
-        break;
-
-    case 3:
-    {
-        int found = -1;
-        int exists = 0;
-
-        printf("Insira o nome do usuario: ");
-        scanf("%s", name);
-
-        // Procura o usuario
-        for (int i = 0; i < MAX_REGISTROS; i++)
-        {
-            if (strcmp(list[i], name) == 0)
-            {
-                found = i;
                 break;
             }
-        }
 
-        if (found == -1)
-        {
-            printf("Usuario nao encontrado.\n");
-            break;
-        }
-
-        printf("Insira um novo nome para o usuario: ");
-        scanf("%s", new_name);
-
-        // Verifica se o novo nome ja existe
-        for (int i = 0; i < MAX_REGISTROS; i++)
-        {
-            if (strcmp(list[i], new_name) == 0)
+            case 4:
             {
-                exists = 1;
+                int found = -1;
+                
+                printf("Insira o nome do usuario que deseja apagar: ");
+                scanf("%29s", name);
+
+                for(int i = 0; i < MAX_REGISTROS; i++)
+                {
+                    if(strcmp(list[i], name) == 0)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+
+                if(found == -1)
+                {
+                    printf("Usuario nao encontrado.\n");
+                }
+                else
+                {
+                    list[found][0] = '\0';
+                    printf("Usuario apagado com sucesso!\n");
+                }
+
                 break;
             }
+
+            case 5:
+            {
+                int vazio = 1;
+
+                printf("\n=== LISTA DE USUARIOS ===\n");
+                //Verifica se todo o vetor linha esta preenchido
+                for(int i = 0; i < MAX_REGISTROS; i++)
+                {
+                    if(list[i][0] != '\0')
+                    {
+                        printf("%d - %s\n", i, list[i]);
+                        vazio = 0;
+                    }
+                }
+
+                if(vazio)
+                {
+                    printf("Nenhum usuario cadastrado.\n");
+                }
+
+                break;
+            }
+
+            case 0:
+                printf("Encerrando programa...\n");
+                break;
+
+            default:
+                printf("Opcao invalida.\n");
         }
-
-        if (exists)
-        {
-            printf("ERROR: Esse nome ja existe.\n");
-        }
-        else
-        {
-            strcpy(list[found], new_name);
-            printf("Usuario alterado com sucesso!\n");
-        }
-
-        break;
-    }
-
-    case 4:
-        printf("");
-        break;
-
-    default:
-        printf("");
-        break;
     }
 
     return 0;
